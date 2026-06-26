@@ -114,37 +114,50 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
 .as-row.cancel { font-weight:600; }
 
 /* ── Recently deleted / Favourites screen ── */
-.rd-screen { position:absolute; inset:0; background:#161431; display:flex; flex-direction:column; z-index:200; transform:translateX(100%); transition:transform .28s cubic-bezier(0.32,0.72,0,1); will-change:transform; }
+.rd-screen { position:absolute; inset:0; background:#161431; display:flex; flex-direction:column; z-index:210; transform:translateX(100%); transition:transform .28s cubic-bezier(0.32,0.72,0,1); will-change:transform; }
 .rd-screen.open { transform:translateX(0); }
 .rd-statusbar { flex-shrink:0; height:54px; display:flex; align-items:center; justify-content:space-between; padding:14px 28px 0; }
-.rd-header { flex-shrink:0; display:flex; align-items:center; gap:12px; padding:8px 16px 12px; }
-.rd-back-btn { width:36px; height:36px; border-radius:256px; background:#F1665C; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
-.rd-back-btn:active { opacity:0.8; }
-.rd-page-title { font-size:16px; font-weight:600; line-height:22px; color:#FAF9F9; }
+
+/* Header: plain back arrow left, title centred */
+.rd-header {
+  flex-shrink:0; display:flex; align-items:center;
+  padding:8px 16px 12px; position:relative;
+}
+.rd-back-btn {
+  width:24px; height:24px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; flex-shrink:0;
+}
+.rd-back-btn:active { opacity:0.6; }
+.rd-page-title {
+  position:absolute; left:0; right:0; text-align:center;
+  font-family:'Roboto Mono',monospace; font-size:16px; font-weight:400;
+  line-height:24px; color:#FAF9F9; pointer-events:none;
+}
+
 .rd-scroll { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
 .rd-scroll::-webkit-scrollbar { display:none; }
-.rd-content { padding:8px 15px 32px; }
+.rd-content { padding:8px 16px 32px; }
 .rd-empty { padding:64px 0; text-align:center; font-size:14px; color:rgba(250,249,249,0.3); line-height:20px; }
 .rd-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
 
-/* RD tabs */
-.rd-tab { flex:1; text-align:center; padding:10px 4px 9px; font-size:13px; font-weight:600; color:rgba(250,249,249,0.38); cursor:pointer; position:relative; }
-.rd-tab.active { color:#F1665C; }
-.rd-tab.active::after { content:''; position:absolute; bottom:-0.5px; left:0; right:0; height:2px; background:#F1665C; border-radius:2px 2px 0 0; }
-
-/* RD card */
-.rd-card { position:relative; aspect-ratio:77/134; border-radius:4px; overflow:hidden; background:#0d0b1e; cursor:pointer; transition:opacity .15s; }
-.rd-card img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; filter:saturate(0.25); }
-.rd-days { position:absolute; bottom:5px; left:5px; font-family:'Roboto Mono',monospace; font-size:11px; color:rgba(250,249,249,0.65); text-shadow:0 0 6px rgba(0,0,0,.8); pointer-events:none; background:rgba(0,0,0,0.3); padding:1px 3px; border-radius:3px; }
-.rd-days.urgent { color:#F1665C; }
+/* RD card — DS Cover component, no desaturation */
+.rd-card {
+  position:relative; aspect-ratio:77/134; border-radius:4px; overflow:hidden;
+  background:#0d0b1e; cursor:pointer; transition:opacity .15s;
+  display:flex; flex-direction:column; justify-content:flex-end; align-items:flex-end;
+  padding:4px;
+}
+.rd-card img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; border-radius:4px; }
+/* Duration: bottom-right, Roboto Mono xs, text-shadow, no background pill */
+.rd-days {
+  position:relative; z-index:1;
+  font-family:'Roboto Mono',monospace; font-size:12px; font-weight:400; line-height:16px;
+  color:#FAF9F9; text-shadow:0 0 8px rgba(0,0,0,0.25);
+  pointer-events:none; white-space:nowrap;
+}
 .rd-card.pressing { opacity:0.55; }
-.rd-card-overlay { position:absolute; inset:0; display:none; align-items:center; justify-content:center; gap:8px; background:rgba(22,20,49,0.55); pointer-events:none; z-index:2; }
-.rd-card.pressing .rd-card-overlay { display:flex; }
-.rd-ov-btn { width:28px; height:28px; border-radius:256px; display:flex; align-items:center; justify-content:center; }
-.rd-ov-btn.restore-ov { background:rgba(250,249,249,0.2); }
-.rd-ov-btn.del-ov { background:rgba(241,102,92,0.25); }
 
-/* ── Preview screen ── */
 .preview-screen { position:absolute; inset:0; background:#000; display:flex; flex-direction:column; z-index:210; transform:translateX(100%); transition:transform .28s cubic-bezier(0.32,0.72,0,1); will-change:transform; border-radius:50px; overflow:hidden; touch-action:none; }
 .preview-screen.open { transform:translateX(0); }
 .pv-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
@@ -196,12 +209,134 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
 .pv-ctx-backdrop { position:absolute; inset:0; z-index:28; display:none; }
 .pv-ctx-backdrop.open { display:block; }
 
-/* ── Toast ── */
+/* Deleted mode chips — top-right, icon only */
+.pv-del-chips {
+  display:none; align-items:center; gap:8px; flex-shrink:0;
+}
+.pv-del-chips.visible { display:flex; }
+.pv-chip {
+  width:36px; height:36px; border-radius:256px;
+  background:rgba(22,20,49,0.72);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.pv-chip:active { opacity:0.75; }
+.pv-chip.danger { background:rgba(241,102,92,0.2); }
 .toast { position:absolute; bottom:108px; left:50%; transform:translateX(-50%) translateY(8px); background:#29284B; border:0.5px solid rgba(255,255,255,0.12); border-radius:256px; padding:10px 20px; font-size:14px; font-weight:600; color:#FAF9F9; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s, transform .2s; z-index:600; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
+/* ── Profile screen ── */
+.profile-screen {
+  position:absolute; inset:0; background:#161431;
+  display:flex; flex-direction:column;
+  z-index:205;
+  transform:translateX(100%);
+  transition:transform .28s cubic-bezier(0.32,0.72,0,1);
+  will-change:transform;
+}
+.profile-screen.open { transform:translateX(0); }
+
+/* Header card */
+.prof-header {
+  flex-shrink:0;
+  background:#3E3D64;
+  border-radius:0 0 40px 40px;
+  padding:24px 16px;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+}
+.prof-avatar-wrap { position:relative; width:96px; height:96px; flex-shrink:0; }
+.prof-avatar {
+  width:96px; height:96px; border-radius:100px;
+  background:#161431;
+  display:flex; align-items:center; justify-content:center;
+}
+.prof-initials {
+  font-family:'Work Sans',sans-serif; font-size:32px; font-weight:800;
+  color:#F1665C; line-height:40px; text-align:center;
+}
+.prof-edit-chip {
+  position:absolute; top:4px; right:0;
+  width:24px; height:24px; border-radius:256px;
+  background:#F1665C;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+}
+.prof-name {
+  font-family:'Work Sans',sans-serif; font-size:28px; font-weight:800;
+  line-height:34px; color:#F1665C; text-align:center; width:100%;
+}
+.prof-handle {
+  font-family:'Roboto Mono',monospace; font-size:14px; font-weight:700;
+  line-height:20px; color:#FAF9F9; text-align:center; width:100%;
+}
+
+/* Scrollable content */
+.prof-scroll {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.prof-scroll::-webkit-scrollbar { display:none; }
+.prof-content {
+  padding:0 16px 24px;
+  display:flex; flex-direction:column; justify-content:space-between;
+  min-height:100%;
+}
+
+/* Options list */
+.prof-list {
+  display:flex; flex-direction:column; gap:0;
+  padding:32px 0;
+}
+.prof-item {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 4px; cursor:pointer; width:100%;
+}
+.prof-item:active { opacity:0.7; }
+.prof-item-chip {
+  width:28px; height:28px; border-radius:256px;
+  background:#F1665C;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.prof-item-chip.dark { background:#161431; }
+.prof-item-label {
+  flex:1; font-family:'Work Sans',sans-serif; font-size:16px; font-weight:400;
+  line-height:24px; color:#FAF9F9;
+}
+.prof-item-label.danger { color:#FF7A7A; }
+.prof-arrow { flex-shrink:0; opacity:0.7; }
+
+/* Toggle switch */
+.prof-toggle {
+  width:33.333px; height:20px; border-radius:416px;
+  background:#F1665C; flex-shrink:0;
+  display:flex; align-items:center; justify-content:flex-end;
+  padding:3.333px; cursor:pointer;
+}
+.prof-toggle-circle {
+  width:13.333px; height:13.333px; border-radius:42px; background:#FAF9F9;
+}
+
+/* Bottom actions */
+.prof-actions { display:flex; flex-direction:column; gap:16px; margin-bottom:8px; }
+.prof-sign-out {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:8px 12px; border-radius:256px;
+  border:1px solid #F1665C; background:transparent;
+  cursor:pointer; align-self:flex-start;
+}
+.prof-sign-out span {
+  font-family:'Work Sans',sans-serif; font-size:14px; font-weight:600;
+  line-height:20px; color:#F1665C;
+}
+
+/* Footer */
+.prof-footer {
+  font-family:'Work Sans',sans-serif; font-size:14px; font-weight:400;
+  line-height:20px; color:#BBBCD6; text-align:center; width:100%;
+}
 @media (prefers-reduced-motion:reduce) {
-  .rd-screen, .preview-screen, .action-sheet, .as-backdrop, .pv-ctx, .shot-card, .toast { transition:none; }
+  .rd-screen, .preview-screen, .profile-screen, .action-sheet, .as-backdrop, .pv-ctx, .shot-card, .toast { transition:none; }
 }
 
 </style>
@@ -246,7 +381,7 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="6" stroke="#FAF9F9" stroke-width="1.7"/><circle cx="14" cy="14" r="10.5" stroke="#FAF9F9" stroke-width="1.7"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="#FAF9F9"/></svg>
       <span class="btab-label">Shots</span>
     </div>
-    <div class="btab">
+    <div class="btab" onclick="openProfile()">
       <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="4.5" stroke="#BBBCD6" stroke-width="1.6"/><path d="M5.5 25c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5" stroke="#BBBCD6" stroke-width="1.6" stroke-linecap="round"/></svg>
       <span class="btab-label">Profile</span>
     </div>
@@ -267,7 +402,7 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
-  <!-- Recently deleted / Favourites screen -->
+  <!-- Recently deleted screen -->
   <div class="rd-screen" id="rd-screen">
     <div class="rd-statusbar">
       <span class="status-time">9:41</span>
@@ -279,24 +414,14 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
     </div>
     <div class="rd-header">
       <div class="rd-back-btn" onclick="closeRecentlyDeleted()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#FAF9F9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <span class="rd-page-title">Recently deleted</span>
     </div>
-    <div style="display:flex; border-bottom:0.5px solid rgba(255,255,255,0.08); flex-shrink:0;">
-      <div class="rd-tab active" id="rd-tab-deleted" onclick="rdSwitchTab('deleted')">Recently deleted</div>
-      <div class="rd-tab"        id="rd-tab-favs"    onclick="rdSwitchTab('favs')">Favourites</div>
-    </div>
     <div class="rd-scroll">
       <div class="rd-content">
-        <div id="rd-panel-deleted">
-          <div class="rd-grid" id="rd-grid"></div>
-          <div class="rd-empty" id="rd-empty">Nothing here yet.</div>
-        </div>
-        <div id="rd-panel-favs" style="display:none">
-          <div class="rd-grid" id="rd-fav-grid"></div>
-          <div class="rd-empty" id="rd-fav-empty">No favourites yet.</div>
-        </div>
+        <div class="rd-grid" id="rd-grid"></div>
+        <div class="rd-empty" id="rd-empty">Nothing here yet.</div>
       </div>
     </div>
   </div>
@@ -316,12 +441,20 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
       </div>
     </div>
 
-    <!-- Back button row -->
+    <!-- Back button row + deleted-mode chips -->
     <div class="pv-top-row">
       <div class="pv-back-inline" onclick="closePreview()">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10l5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
-      <div style="width:36px; flex-shrink:0;"></div><!-- balance spacer -->
+      <!-- Deleted-mode chips (restore + perm delete) — hidden in normal mode -->
+      <div class="pv-del-chips" id="pv-del-chips">
+        <div class="pv-chip" onclick="pvRestoreShot()" onpointerdown="event.stopPropagation()" title="Restore">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2.5 9a6.5 6.5 0 1 0 1.9-4.6" stroke="white" stroke-width="1.6" stroke-linecap="round"/><path d="M2.5 4v5h5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pv-chip danger" onclick="pvPermDelete()" onpointerdown="event.stopPropagation()" title="Delete permanently">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2.25 4.5h13.5M6 4.5V3.75A1.5 1.5 0 017.5 2.25h3A1.5 1.5 0 0112 3.75V4.5M14.25 4.5l-.75 10.5A1.5 1.5 0 0112 16.5H6a1.5 1.5 0 01-1.5-1.5L3.75 4.5" stroke="#F1665C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
     </div>
 
     <!-- Navigation chevrons -->
@@ -363,6 +496,126 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
       </div>
     </div>
   </div>
+
+  <!-- Profile screen -->
+  <div class="profile-screen" id="profile-screen">
+
+    <!-- Status bar -->
+    <div class="status-bar" style="background:#3E3D64; flex-shrink:0;">
+      <span class="status-time">9:41</span>
+      <div class="status-icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="8" width="3" height="4" rx="0.6" fill="white" opacity="0.35"/><rect x="5" y="5.5" width="3" height="6.5" rx="0.6" fill="white" opacity="0.35"/><rect x="10" y="3" width="3" height="9" rx="0.6" fill="white" opacity="0.35"/><rect x="15" y="0" width="3" height="12" rx="0.6" fill="white"/></svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><circle cx="8" cy="10.5" r="1.2" fill="white"/><path d="M4.5 7.2C5.4 6.2 6.6 5.6 8 5.6s2.6.6 3.5 1.6" stroke="white" stroke-width="1.3" stroke-linecap="round"/><path d="M1.5 4.3C3 2.6 5.4 1.5 8 1.5s5 1.1 6.5 2.8" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.5"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="white" stroke-opacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="white"/><path d="M23 4.5v3a1.5 1.5 0 000-3z" fill="white" opacity="0.4"/></svg>
+      </div>
+    </div>
+
+    <!-- Header card -->
+    <div class="prof-header">
+      <div class="prof-avatar-wrap">
+        <div class="prof-avatar">
+          <span class="prof-initials">JD</span>
+        </div>
+        <div class="prof-edit-chip">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8.5 1.5l2 2L3 11H1V9L8.5 1.5z" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;">
+        <p class="prof-name">John Doe</p>
+        <p class="prof-handle">@party_unicorn</p>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="prof-scroll">
+      <div class="prof-content">
+        <div>
+          <!-- Options list -->
+          <div class="prof-list">
+            <!-- Profile -->
+            <div class="prof-item">
+              <div class="prof-item-chip">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="2.5" stroke="white" stroke-width="1.4"/><path d="M3 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <span class="prof-item-label">Profile</span>
+              <svg class="prof-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#FAF9F9" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <!-- Notifications -->
+            <div class="prof-item">
+              <div class="prof-item-chip">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a4 4 0 0 0-4 4v3l-1 1.5h10L12 9V6a4 4 0 0 0-4-4z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.5 13a1.5 1.5 0 0 0 3 0" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <span class="prof-item-label">Notifications</span>
+              <svg class="prof-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#FAF9F9" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <!-- Auto-save -->
+            <div class="prof-item">
+              <div class="prof-item-chip">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 11V4M8 11l-2.5-2.5M8 11l2.5-2.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 12v1a2 2 0 002 2h8a2 2 0 002-2v-1" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </div>
+              <span class="prof-item-label">Auto-save to camera roll</span>
+              <div class="prof-toggle" onclick="this.classList.toggle('off'); this.style.background=this.classList.contains('off')?'rgba(255,255,255,0.2)':'#F1665C'; this.style.justifyContent=this.classList.contains('off')?'flex-start':'flex-end';">
+                <div class="prof-toggle-circle"></div>
+              </div>
+            </div>
+            <!-- Recently deleted -->
+            <div class="prof-item" onclick="openRecentlyDeletedFromProfile()">
+              <div class="prof-item-chip">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5.33 4V3A1.33 1.33 0 016.67 1.67h2.66A1.33 1.33 0 0110.67 3v1M12 4l-.53 7.47A1.33 1.33 0 0110.14 12.67H5.86A1.33 1.33 0 014.53 11.47L4 4" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <span class="prof-item-label">Recently deleted</span>
+              <svg class="prof-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#FAF9F9" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Danger zone -->
+          <div class="prof-item" style="margin-bottom:24px;">
+            <div class="prof-item-chip dark">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5.33 4V3A1.33 1.33 0 016.67 1.67h2.66A1.33 1.33 0 0110.67 3v1M12 4l-.53 7.47A1.33 1.33 0 0110.14 12.67H5.86A1.33 1.33 0 014.53 11.47L4 4" stroke="#FF7A7A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="prof-item-label danger">Delete my account</span>
+            <svg class="prof-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#FF7A7A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+
+          <!-- Sign out -->
+          <div class="prof-sign-out">
+            <span>Sign out</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 5l4 3-4 3M14 8H6M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="#F1665C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <p class="prof-footer" style="margin-top:24px;">
+          v 2.3.5<br>
+          Have any suggestions? Send a message to <a href="mailto:support@sureshot.video">support@sureshot.video</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Bottom nav (Profile tab active) -->
+    <div class="bottom-bar">
+      <div class="btab" onclick="closeProfile()">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4.5 12.5L14 5l9.5 7.5V23a1 1 0 01-1 1H5.5a1 1 0 01-1-1v-10.5z" stroke="#BBBCD6" stroke-width="1.6" stroke-linejoin="round"/><path d="M10.5 24V17h7v7" stroke="#BBBCD6" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <span class="btab-label">Home</span>
+      </div>
+      <div class="btab">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3.75" y="5.75" width="20.5" height="18.5" rx="2.5" stroke="#BBBCD6" stroke-width="1.6"/><path d="M8.5 3.5v5M19.5 3.5v5M3.75 12.25h20.5" stroke="#BBBCD6" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="btab-label">Events</span>
+      </div>
+      <div class="btab-record-pill">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2.5" y="6.5" width="17" height="15" rx="2.5" stroke="#F1665C" stroke-width="1.6"/><path d="M19.5 11l6-3.5v13L19.5 17" stroke="#F1665C" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="btab" onclick="closeProfile()">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="6" stroke="#BBBCD6" stroke-width="1.7"/><circle cx="14" cy="14" r="10.5" stroke="#BBBCD6" stroke-width="1.7"/><path d="M12 11.5l5 2.5-5 2.5V11.5z" fill="#BBBCD6"/></svg>
+        <span class="btab-label">Shots</span>
+      </div>
+      <div class="btab active">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="4.5" stroke="#FAF9F9" stroke-width="1.6"/><path d="M5.5 25c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5" stroke="#FAF9F9" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="btab-label">Profile</span>
+      </div>
+    </div>
+
+  </div><!-- /profile-screen -->
 
 </div><!-- /phone -->
 
@@ -501,46 +754,13 @@ function renderDeleted() {
 
   // Oldest first — soonest to expire at top
   [...deletedItems].sort((a, b) => a.deletedAt - b.deletedAt).forEach(item => {
-    const msLeft   = (item.deletedAt + 30 * 86400000) - Date.now();
-    const daysLeft = Math.max(1, Math.ceil(msLeft / 86400000));
-    const urgent   = daysLeft <= 3;
-
     const card = mk('div', 'rd-card');
     card.dataset.id = item.id;
     card.innerHTML = `
       <img src="${item.thumb}" alt="" loading="lazy">
-      <span class="rd-days${urgent ? ' urgent' : ''}">${daysLeft}d</span>
-      <div class="rd-card-overlay">
-        <div class="rd-ov-btn restore-ov"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 1 0 1.5-3.5" stroke="rgba(250,249,249,0.9)" stroke-width="1.4" stroke-linecap="round"/><path d="M2 3.5V7h3.5" stroke="rgba(250,249,249,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="rd-ov-btn del-ov"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.75 3.5h10.5M4.667 3.5V2.917A1.167 1.167 0 015.833 1.75h2.334A1.167 1.167 0 019.333 2.917V3.5M11.083 3.5l-.583 8.167a1.167 1.167 0 01-1.167 1.166H4.667A1.167 1.167 0 013.5 11.667L2.917 3.5" stroke="#F1665C" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      </div>`;
+      <span class="rd-days">${item.dur}</span>`;
     attachDeletedHandlers(card, item);
     grid.appendChild(card);
-  });
-}
-
-function renderFavourites() {
-  const grid  = document.getElementById('rd-fav-grid');
-  const empty = document.getElementById('rd-fav-empty');
-  grid.innerHTML = '';
-
-  const favs = activeShots.filter(s => s.favourite);
-  if (!favs.length) {
-    empty.style.display = 'block';
-    grid.style.display  = 'none';
-    return;
-  }
-  empty.style.display = 'none';
-  grid.style.display  = '';
-
-  favs.forEach(shot => {
-    const wrap = mk('div', 'shot-card-wrap');
-    const card = mk('div', 'shot-card');
-    card.dataset.id = shot.id;
-    card.innerHTML = `<img src="${shot.thumb}" alt="" loading="lazy"><span class="shot-dur">${shot.dur}</span>`;
-    card.addEventListener('click', () => { closeRecentlyDeleted(); openPreview(shot); });
-    wrap.appendChild(card);
-    grid.appendChild(wrap);
   });
 }
 
@@ -582,15 +802,18 @@ function attachDeletedHandlers(card, item) {
 
   card.addEventListener('pointerdown', () => {
     didLong = false;
-    pressTimer = setTimeout(() => { pressTimer = null; didLong = true; card.classList.add('pressing'); }, 450);
+    pressTimer = setTimeout(() => {
+      pressTimer = null;
+      didLong    = true;
+      card.classList.add('pressing');
+    }, 450);
   });
 
   const release = () => { clearTimeout(pressTimer); pressTimer = null; card.classList.remove('pressing'); };
 
   card.addEventListener('pointerup',     () => { release(); didLong = false; });
   card.addEventListener('pointercancel', () => { release(); didLong = false; });
-  card.querySelector('.restore-ov').addEventListener('pointerup', e => { e.stopPropagation(); release(); restoreShot(item.id); });
-  card.querySelector('.del-ov').addEventListener('pointerup',     e => { e.stopPropagation(); release(); showPermDeleteSheet(item.id); });
+  card.addEventListener('click',         () => { if (!didLong) openDeletedPreview(item); });
 }
 
 
@@ -601,25 +824,14 @@ let mpShot = null;
 function openMiniPreview(shot, wrapEl) {
   mpShot = shot;
   document.getElementById('mp-img').src = shot.thumb;
-
-  // Populate dropdown
-  const rows = buildMenuRows(shot, () => { closeMiniPreview(); showDeleteSheet(shot); });
-  const container = document.getElementById('mp-dropdown');
-  container.innerHTML = '';
-  rows.forEach((r, i) => {
-    const row = mk('div', 'mp-row' + (r.danger ? ' danger' : ''));
-    row.innerHTML = `<span>${r.label}</span>${r.icon}`;
-    if (i < rows.length - 1) row.style.borderBottom = '0.5px solid rgba(255,255,255,0.1)';
-    if (r.action) row.addEventListener('click', r.action);
-    container.appendChild(row);
-  });
+  mpBuildOptionsRows(shot);
 
   // Position: centre on card, prefer above, clamp within phone
   const phone     = document.getElementById('phone');
   const phoneRect = phone.getBoundingClientRect();
   const wrapRect  = wrapEl.getBoundingClientRect();
   const mpW = 220;
-  const mpH = 300 + rows.length * 48;
+  const mpH = 300 + buildMenuRows(shot, null).length * 48;
 
   let left = (wrapRect.left - phoneRect.left) + (wrapRect.width / 2) - (mpW / 2);
   left = Math.max(8, Math.min(left, phoneRect.width - mpW - 8));
@@ -633,6 +845,57 @@ function openMiniPreview(shot, wrapEl) {
   mp.style.top  = top  + 'px';
   mp.classList.add('open');
   document.getElementById('mp-backdrop').classList.add('open');
+}
+
+function mpBuildOptionsRows(shot) {
+  const rows = buildMenuRows(shot, () => mpShowDeleteConfirm(shot));
+  const container = document.getElementById('mp-dropdown');
+  container.innerHTML = '';
+  rows.forEach((r, i) => {
+    const row = mk('div', 'mp-row' + (r.danger ? ' danger' : ''));
+    row.innerHTML = `<span>${r.label}</span>${r.icon}`;
+    if (i < rows.length - 1) row.style.borderBottom = '0.5px solid rgba(255,255,255,0.1)';
+    if (r.action) row.addEventListener('click', r.action);
+    container.appendChild(row);
+  });
+}
+
+function mpShowDeleteConfirm(shot) {
+  const container = document.getElementById('mp-dropdown');
+  container.innerHTML = '';
+
+  const para = mk('div');
+  para.style.cssText = 'padding:12px 16px;font-size:13px;font-weight:400;color:rgba(250,249,249,0.55);line-height:18px;border-bottom:0.5px solid rgba(255,255,255,0.08);text-align:center;';
+
+  const addRow = (label, danger, action) => {
+    const row = mk('div', 'mp-row' + (danger ? ' danger' : ''));
+    row.style.justifyContent = 'center';
+    row.innerHTML = `<span style="flex:none">${label}</span>`;
+    row.addEventListener('click', action);
+    return row;
+  };
+
+  if (shot.inCollection) {
+    para.textContent = 'Your clip was used in a collection. You can donate it to the organiser to keep it in the collection anonymously, or delete it entirely.';
+    container.appendChild(para);
+
+    const donate = addRow('Donate and delete', false, () => { closeMiniPreview(); softDelete(shot.id); showToast('Thanks for donating your clip.'); });
+    donate.style.borderBottom = '0.5px solid rgba(255,255,255,0.1)';
+    container.appendChild(donate);
+
+    const del = addRow('Delete', true, () => { closeMiniPreview(); softDelete(shot.id); });
+    del.style.borderBottom = '0.5px solid rgba(255,255,255,0.08)';
+    container.appendChild(del);
+  } else {
+    para.textContent = 'This shot will be stored for 30 days, then permanently deleted. You can restore it from your account settings before then.';
+    container.appendChild(para);
+
+    const del = addRow('Delete', true, () => { closeMiniPreview(); softDelete(shot.id); });
+    del.style.borderBottom = '0.5px solid rgba(255,255,255,0.08)';
+    container.appendChild(del);
+  }
+
+  container.appendChild(addRow('Cancel', false, () => mpBuildOptionsRows(shot)));
 }
 
 function closeMiniPreview() {
@@ -664,20 +927,24 @@ function buildMenuRows(shot, onDelete) {
 
 function showDeleteSheet(shot) {
   const sheet = document.getElementById('action-sheet');
+
   if (shot.inCollection) {
     sheet.innerHTML = `
       <div class="as-group">
-        <div class="as-context">This shot is in an organiser's collection.</div>
-        <div class="as-row danger" id="_as1">Delete and let organiser keep it</div>
-        <div class="as-row danger" id="_as2">Delete from everywhere</div>
+        <div class="as-context">Your clip was used in a collection. You can donate it to the organiser to keep it in the collection anonymously, or delete it entirely.</div>
+        <div class="as-row" id="_as1">Donate and delete</div>
+        <div class="as-row danger" id="_as2">Delete</div>
       </div>
       <div class="as-group"><div class="as-row cancel" id="_as3">Cancel</div></div>`;
-    sheet.querySelector('#_as1').onclick = () => { closeSheet(); softDelete(shot.id); };
+    sheet.querySelector('#_as1').onclick = () => { closeSheet(); softDelete(shot.id); showToast('Thanks for donating your clip.'); };
     sheet.querySelector('#_as2').onclick = () => { closeSheet(); softDelete(shot.id); };
     sheet.querySelector('#_as3').onclick = closeSheet;
   } else {
     sheet.innerHTML = `
-      <div class="as-group"><div class="as-row danger" id="_as1">Delete</div></div>
+      <div class="as-group">
+        <div class="as-context">This shot will be stored for 30 days, then permanently deleted. You can restore it from your account settings before then.</div>
+        <div class="as-row danger" id="_as1">Delete</div>
+      </div>
       <div class="as-group"><div class="as-row cancel" id="_as2">Cancel</div></div>`;
     sheet.querySelector('#_as1').onclick = () => { closeSheet(); softDelete(shot.id); };
     sheet.querySelector('#_as2').onclick = closeSheet;
@@ -735,7 +1002,6 @@ function permDelete(id) {
 // ── Recently deleted / Favourites ─────────────────────────────────────────────
 
 function revealRecentlyDeleted() {
-  rdSwitchTab('deleted');
   renderDeleted();
   document.getElementById('rd-screen').classList.add('open');
 }
@@ -744,20 +1010,13 @@ function closeRecentlyDeleted() {
   document.getElementById('rd-screen').classList.remove('open');
 }
 
-function rdSwitchTab(tab) {
-  document.getElementById('rd-tab-deleted').classList.toggle('active', tab === 'deleted');
-  document.getElementById('rd-tab-favs').classList.toggle('active',   tab === 'favs');
-  document.getElementById('rd-panel-deleted').style.display = tab === 'deleted' ? '' : 'none';
-  document.getElementById('rd-panel-favs').style.display    = tab === 'favs'    ? '' : 'none';
-  if (tab === 'favs') renderFavourites();
-}
-
 
 // ── Preview ───────────────────────────────────────────────────────────────────
 
-let pvShot    = null;
-let pvPlaying = false;
-let pvIndex   = 0;
+let pvShot      = null;
+let pvPlaying   = false;
+let pvIndex     = 0;
+let pvIsDeleted = false; // true when previewing a shot from Recently deleted
 
 // Returns shots sorted identically to the grid (newest event group first, newest date first within)
 function pvShotList() {
@@ -774,8 +1033,17 @@ function pvShotList() {
 
 function openPreview(shot) {
   const list = pvShotList();
-  pvIndex = list.findIndex(s => s.id === shot.id);
+  pvIndex     = list.findIndex(s => s.id === shot.id);
+  pvIsDeleted = false;
   pvLoadShot(list[pvIndex]);
+  document.getElementById('preview-screen').classList.add('open');
+  swipeReset();
+}
+
+function openDeletedPreview(shot) {
+  pvIsDeleted = true;
+  pvShot      = shot;
+  pvLoadShot(shot);
   document.getElementById('preview-screen').classList.add('open');
   swipeReset();
 }
@@ -796,8 +1064,37 @@ function pvLoadShot(shot) {
   document.getElementById('pv-event').textContent = shot.event;
   document.getElementById('pv-badge').style.display = shot.uploadStatus === 'success' ? '' : 'none';
 
-  pvBuildOptionsCtx(shot);
-  pvUpdateChevrons();
+  // Toggle between normal mode (ellipsis + chevrons) and deleted mode (restore/delete chips)
+  const ellipsis = document.getElementById('pv-ellipsis-pill');
+  const chips    = document.getElementById('pv-del-chips');
+  const prev     = document.getElementById('pv-nav-prev');
+  const next     = document.getElementById('pv-nav-next');
+
+  if (pvIsDeleted) {
+    if (ellipsis) ellipsis.style.display = 'none';
+    chips.classList.add('visible');
+    if (prev) prev.style.display = 'none';
+    if (next) next.style.display = 'none';
+  } else {
+    if (ellipsis) ellipsis.style.display = '';
+    chips.classList.remove('visible');
+    if (prev) prev.style.display = '';
+    if (next) next.style.display = '';
+    pvBuildOptionsCtx(shot);
+    pvUpdateChevrons();
+  }
+}
+
+function pvRestoreShot() {
+  if (!pvShot) return;
+  const id = pvShot.id;
+  closePreview();
+  restoreShot(id);
+}
+
+function pvPermDelete() {
+  if (!pvShot) return;
+  showPermDeleteSheet(pvShot.id);
 }
 
 function pvUpdateChevrons() {
@@ -826,7 +1123,8 @@ function closePreview() {
   swipeReset();
   const v = document.getElementById('pv-video');
   v.pause(); v.src = '';
-  pvPlaying = false;
+  pvPlaying   = false;
+  pvIsDeleted = false;
   document.getElementById('pv-icon-play').style.display  = '';
   document.getElementById('pv-icon-pause').style.display = 'none';
   document.getElementById('preview-screen').classList.remove('open');
@@ -1054,6 +1352,22 @@ function pvSwipeEnd() {
   ps.addEventListener('pointerup',     pvSwipeEnd,  { passive:true });
   ps.addEventListener('pointercancel', () => { swipe.active = false; swipe.axis = null; swipeReset(); }, { passive:true });
 })();
+
+
+// ── Profile screen ────────────────────────────────────────────────────────────
+
+function openProfile() {
+  document.getElementById('profile-screen').classList.add('open');
+}
+
+function closeProfile() {
+  document.getElementById('profile-screen').classList.remove('open');
+}
+
+function openRecentlyDeletedFromProfile() {
+  renderDeleted();
+  document.getElementById('rd-screen').classList.add('open');
+}
 
 
 // ── Init ──────────────────────────────────────────────────────────────────────
