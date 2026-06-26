@@ -856,7 +856,7 @@ body { background:#0e0e0e; display:flex; justify-content:center; align-items:cen
       </div>
       <div style="margin-top:24px;" class="del-btn-stack">
         <button class="del-btn danger" id="del-confirm-btn" disabled onclick="openDelScreen('del-done')">Delete my account</button>
-        <button class="del-btn-ghost" onclick="closeDelScreen('del-confirm')">Cancel</button>
+        <button class="del-btn-ghost" onclick="delCancelToProfile()">Cancel</button>
       </div>
     </div></div>
   </div>
@@ -1732,8 +1732,18 @@ function delCheckConfirm(val) {
   matched ? inp.classList.add('matched') : inp.classList.remove('matched');
 }
 
-function delReset() {
+function delCancelToProfile() {
+  ['del-confirm','del-choose','del-donate','del-download','del-intent'].forEach(id => {
+    document.getElementById(id).classList.remove('open');
+  });
+  delStack.length = 0;
+  Object.keys(delSelection).forEach(k => delSelection[k].clear());
+  delDownloadRequested = false;
+}
+
+
   // Close all del screens and return to main
+function delReset() {
   ['del-splash','del-done','del-confirm','del-choose','del-donate','del-download','del-intent'].forEach(id => {
     document.getElementById(id).classList.remove('open');
   });
